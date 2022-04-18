@@ -1,0 +1,74 @@
+TODO: switch S0 to lfs user instead of sudo
+
+motivation:
+
+linuxfromscratch is educational -- see how a linux system is put together.
+introducing nix for similar reasons:  to learn how to put things together using nix.
+
+changes from LFS book:
+1. will do all building from nix derivations.
+   This means we construct derivations for linux used to bootstrap
+   (in this case,  nixos 21.0)
+
+changes from usual nix packaging:
+2. packages (hello, binutils, gcc, ..)
+   will need to install to LFS tools area /mnt/lfs/tools;
+   this can't be in nix store.
+
+   nix build will preserve both source+build directories as nix output,
+   so that we can run 'make install' from outside nix shell.
+
+   Need this because nix build is sandboxed,   and cannot write to non-nix-store
+   directories like /mnt/lfs/tools
+
+3. use
+     $ nix-shell . -A gcc_lfsx_stage1 --pure --run genericBuild
+   to get the effect of a nix build,  without sandboxing.
+   sandboxing prevents nix-build from reading/writing /mnt/lfs
+
+Instructions:
+P0. prepare /mnt/lfs/ directory as per LFS book
+
+S0. gnu hello.
+    provides some evidence that some primary build dependencies are present;
+    exercises gcc and autotools without adding any baggage.
+    the 'hello' package isn't a dependency of anything else
+    
+    will require:
+    - local nix install
+    - network access (to ftp.gnu.org)
+    - gcc, autotools
+
+    make stage1 hello -> /mnt/lfs/tools.
+     $ nix-build -A hello
+     $ sudo ./hello/final-install.sh
+
+    note: this step relies on:
+
+    - nxfs/default.nix                \
+    - nxfs/hello/default.nix          |
+    - nxfs/hello/autotools.nix        | used by nix-build -A hello
+    - nxfs/hello/builder.sh           |
+    - nxfs/hello/setup.sh             /
+
+    - nxfs/hello/final-install-aux.sh \ used for /mnt/lfs/tools install
+    - nxfs/hello/final-install.sh     /
+
+S1. gnu binutils.
+
+    make stage1 binutils -> /mnt/lfs/tools
+     $ nix-build -A binutils_lfsx_stage1
+     $ sudo ./binutils/final-install.sh
+
+   source files (.nix, .sh) parallel the setup for S0
+   the 'binutils' package isn't a dependency of anything else;
+   it's folded into the 'gcc' package
+
+S2. gcc
+
+   make stage1 gcc -> nix store
+     $ nix-build -A gcc_lfsx_stage1
+
+   source files (.nix, .sh) parallel the setup for S0
+
+

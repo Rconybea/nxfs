@@ -1,0 +1,7 @@
++- README         # read this first :)
++- RESOURCES      # useful code snippets
++- default.nix    # definition of user package repository
++- nix-support/   # nix-support: shared .nix files;  used in {./hello, ./binutils, ..} etc
++- hello/         # hello. "hello, world" as an autotools project (not used)
++- binutils/      # binutils (stage1,  not used)
++- gcc/           # gcc+binutils (stage1)

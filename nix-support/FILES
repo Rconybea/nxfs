@@ -1,0 +1,2 @@
++- lfs.nix         LFS (linux from scratch) project constants
++- autotools.nix   common nix defaults for LFS autotools builds

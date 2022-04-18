@@ -1,0 +1,40 @@
+1.
+https://nix-tutorial.gitlabpages.inria.fr
+
+2.
+To debug nix expressions:
+use builtins.trace
+   builtins.trace x y
+prints x,  and evaluates to y
+
+3.
+can use ${foo} in a string e.g. builtins.trace ''here ends the ${x or y}'' to print value of expression 'x or y'
+
+4.
+define a function in nix:
+  $ nix repl
+  nix-repl> f = x: x*2
+  f = x: x*2
+
+  nix-repl> f
+  f
+  <lambda @ (string):1:2>
+
+  nix-repl> f 3
+  6
+
+
+5.
+define a function with two arguments
+  $ nix repl
+  nix-repl> g = x: (y: x*y)
+  g = x: (y: x*y)
+
+  nix-repl> g
+  g
+  <lambda @ (string):1:2>>
+
+  nix-repl> g 4 5
+  g 4 5
+  20
+  
