@@ -1,0 +1,14 @@
+linux kernel headers,  for linux-from-scratch build 5.4.1
+
+To build+install directly to /mnt/lfs:
+  $ ./path/to/nxfs/linux/lfs-build.sh
+
+  puts kernel headers in /mnt/lfs/usr/include
+
+Or, to install to nix store
+  $ cd path/to/nxfs/    # (i.e. parent directory)
+  $ nix-build -A linux_lfsx_stage1
+  
+  puts kernel headers in ${out}/include, e.g. ${out}/include/asm
+  ultimate destination should be ${LFS}/usr,  e.g. /mnt/lfs/usr/include/asm
+
