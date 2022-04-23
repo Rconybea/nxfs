@@ -284,6 +284,17 @@ function install_gcc() {
     popd
 } # ..install_gcc
 
+function do_all_phases() {
+    display_phase
+    unpack_phase
+    patch_phase
+    configure_phase
+    compile_binutils
+    install_binutils
+    compile_gcc
+    install_gcc
+} # ..do_all_phases
+
 function help() {
     echo "build sequence:"
     echo "$ display_phase"
