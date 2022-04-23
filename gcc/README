@@ -1,0 +1,127 @@
+gcc cross compiler,  for linux-from-scratch build.
+
+We will be using the cross compiler to compile executables on the host operating system
+(here labelled x86_64-pc-linux-gnu),  where those executables will run on destination
+operating system 'LFS' (here labelled x86_64-lfs-linux-gnu).
+
+See setup.sh for build details.
+The cross compiler prepares executables that expect to run on a system rooted at
+LFS=/mnt/lfs.   In other words we expect to eventually run with the filesystem currently
+mounted at /mnt/lfs,  instead mounted at /
+
+note on nix permissioning:
+  nix only wants to install to /nix/store paths;
+  it has active countermeasures for any attempts to get-out-of-jail.
+  That affects us,  because we want to install to /mnt/lfs/tools
+  Instead of having nix perform the final install,
+  we have it copy the build state after compiling, to the (nix-store-located) output directory.
+
+Build with:
+  $ cd gcc
+  $ nix-build
+Then (maybe) run final install step:
+  $ ./final-install.sh
+
+If build fails,  can try
+  $ nix-build --keep-failed
+then inspect /tmp/nix-build-gcc-lsfx-stage1.drv-${n}
+
+Debug build by hand with:
+  $ cd nxfs                              # parent directory
+  $ nix-shell -A gcc_lfsx_stage1 --pure  # nix derivation for gcc
+  $ cd gcc
+  $ source setup.sh
+  $ help                                 # if need more reminders
+  $ display_phase
+  $ unpack_phase
+  $ patch_phase
+  $ configure_phase
+  $ compile_phase
+  $ install_phase
+  
+16apr2022
+
+eventually solved build problems by incorporating binutils
+into this codebase.  Need to do this,  because gcc build expects
+binutils to be available at the same location where it installs compiler.
+
+10apr2022
+
+1.  getting error like 'cannot determine suffix of object files'.
+    I think this happens after building a version of c compiler,
+    then attempting to run it on an automatically-generated input file.
+
+    problem must be subtle,   since building under
+      $ nix-shell
+    and
+      $ nix-shell --pure
+
+    runs successfully !?
+
+2.  try capturing and comparing shell environments.
+    modifed project builder.sh to capture shell environment,
+    then compare between nix-shell and nix-build attempts
+
+    stored nix-shell version in env.nix-shell-pure
+    (to capture: $ cd nxfs/gcc; nix-shell --pure; source setup.sh; env > env.nix-shell-pure)
+
+    stored nix-build version in env.nix-build
+    (to capture: edit builder.sh to exit before calling display_phase();
+     then $ cd nxfs/gcc; nix-bulid; cp result/build.env env.nix-build)
+
+    didn't find any plausible differences.   in particular PATH seems to be equivalent;
+    variables that differ seem innocuous.
+
+3.  looking at /tmp/nix-build-gcc-lsfx-stage1.drv-1/gcc-11.2.0.
+    build runs in /tmp/nix-build-gcc-lsfx/stage1.drv-1/gcc-11.2.0/build
+    (call this $b from now on)
+
+      $b/config.log
+
+    looks like it comes from top-level ./configure.   no errors here
+
+      $b/x86_64-lfs-linux-gnu/libgcc/config.log
+
+    this is where we see errors.   excerpt:
+    
+      configure:3782: checking for suffix of object files
+      configure:3804: /build/gcc-11.2.0/build/./gcc/xgcc -B/build/gcc-11.2.0/build/./gcc/ -B/mnt/lfs/tools/x86_64-lfs-linux-gnu/bin/ -B/mnt/lfs/tools/x86_64-lfs-linux-gnu/lib/ -isystem /mnt/lfs/tools/x86_64-lfs-linux-gnu/include -isystem /mnt/lfs/tools/x86_64-lfs-linux-gnu/sys-include    -c -g -O2  conftest.c >&5
+      /build/gcc-11.2.0/build/./gcc/as: exec: line 106: illegal option --
+      configure:3808: $? = 1
+      configure: failed program was:
+      | /* confdefs.h */
+      | #define PACKAGE_NAME "GNU C Runtime Library"
+      | #define PACKAGE_TARNAME "libgcc"
+      | #define PACKAGE_VERSION "1.0"
+      | #define PACKAGE_STRING "GNU C Runtime Library 1.0"
+      | #define PACKAGE_BUGREPORT ""
+      | #define PACKAGE_URL "http://www.gnu.org/software/libgcc/"
+      | /* end confdefs.h.  */
+      | 
+      | int
+      | main ()
+      | {
+      | 
+      |   ;
+      |   return 0;
+      | }
+      configure:3822: error: in `/build/gcc-11.2.0/build/x86_64-lfs-linux-gnu/libgcc':
+      configure:3824: error: cannot compute suffix of object files: cannot compile
+      See `config.log' for more details
+
+   $b/./gcc/as exists,   it's a /bin/sh script.   extract from the script (my line numbers):
+      022: ORIGINAL_AS_FOR_TARGET=""
+      ..
+      032: invoked=`basename "$0"`
+      033: id=$invoked
+      034: case "$invoked" in
+      035:   as)
+      036:     original=$ORIGINAL_AS_FOR_TARGET
+      037:     prog=as-new$exeext
+      038:     dir=gas
+      039:     ;;
+
+      106: exec $original ${1+"$@"}
+
+
+   
