@@ -8,8 +8,7 @@ self_dir=$(dirname ${BASH_SOURCE[0]})
 
 echo "lfs-build: self_dir=[${self_dir}]"
 pushd ${self_dir}/..
-nix-shell -A gcc_lfsd_stage1 --run "cd ${self_dir} && ./builder.sh"
+nix-shell -A glibc_lfsd_stage1 --run "cd ${self_dir} && source setup.sh && do_all_phases"
 popd
 
-
-
+# end lfs-build.sh

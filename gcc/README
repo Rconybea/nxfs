@@ -16,11 +16,11 @@ note on nix permissioning:
   Instead of having nix perform the final install,
   we have it copy the build state after compiling, to the (nix-store-located) output directory.
 
-Build with:
-  $ cd gcc
-  $ nix-build
-Then (maybe) run final install step:
-  $ ./final-install.sh
+To install directly to /mnt/lfs:
+  $ ./path/to/nxfs/gcc/lfs-build.sh
+To install to nix store:
+  $ cd path/to/nxfs
+  $ nix-build -A gcc_lfsx_stage1
 
 If build fails,  can try
   $ nix-build --keep-failed

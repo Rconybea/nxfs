@@ -42,9 +42,14 @@ export LC_ALL LFS LFS_TOOLS LFS_TGT
 
 #INSTALL_PREFIX=${LFS_TOOLS}  # install to /mnt/lfs/tools
 if [[ ${lfsdirect} -eq 1 ]]; then
-  INSTALL_PREFIX=${LFS_TOOLS}
+    # if installing to LFS directly,   then we need /mnt/lfs/tools/bin content to be in path,
+    # in place of upstream nix dependencies
+    #
+    PATH=${LFS_TOOLS}/bin:${PATH}
+
+    INSTALL_PREFIX=${LFS_TOOLS}
 else
-  INSTALL_PREFIX=${out}         # install to nix store
+    INSTALL_PREFIX=${out}         # install to nix store
 fi
 
 # will put /bin/sh here.   Note that we need established build PATH before
@@ -174,7 +179,7 @@ function configure_phase() {
     # --prefix                will eventually be installed to this directory
     #                         (/mnt/lfs/tools or nix store location)
     # --target                target architecture (x86_64-lfs-linux-gnu)
-    # --with-glibc-version    glibc version that will be used on target
+    # --with-glibc-version    glibc version that will be used on target (to be built later)
     # --with-newlib           prevents building anything that requires libc support
     # --without-headers       we don't need standard headers compatible with target,
     #                         can suppress them.
