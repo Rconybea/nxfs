@@ -231,6 +231,13 @@ function install_phase() {
     popd
 } # ..install_phase
 
+function cleanup_phase() {
+    pushd ${home}
+    rm -rf bin
+    rm -rf ${vsubdir}
+    popd
+} # ..cleanup_phase
+
 function do_all_phases() {
     display_phase
     check_phase
@@ -239,10 +246,13 @@ function do_all_phases() {
     configure_phase
     compile_phase
     install_phase
+    cleanup_phase
 } # ..do_all_phases
 
 function help() {
     echo "build sequence:"
+    echo "$ do_all_phases"
+    echo "or:"
     echo "$ display_phase"
     echo "$ check_phase"
     echo "$ unpack_phase"
@@ -250,6 +260,7 @@ function help() {
     echo "$ configure_phase"
     echo "$ compile_phase"
     echo "$ install_phase"
-}
+    echo "$ cleanup_phase"
+} # ..help
 
 # end setup.sh

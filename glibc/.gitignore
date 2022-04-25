@@ -1,2 +1,6 @@
-# bin/sh: generated symlink
-bin/sh
+# ignoring local build artifacts,
+# created when building with ./lfs-build.sh or nix-shell
+#
+bin
+glibc-*
+
