@@ -1,0 +1,15 @@
+binutils,  for linux-from-scratch build.
+
+nix only wants to install to /nix/store paths;
+it has active countermeasures for any attempts to get-out-of-jail.
+That affects us,  because we want to install to /mnt/lfs/tools
+Instead of having nix perform the final install,
+we have it copy the build state after compiling, to the (nix-store-located) output directory.
+This is done by:
+  $ cd binutils
+  $ nix-build
+
+Then from outside nix,   can run that install step:
+  $ cd binutils
+  $ ./final-install.sh
+  
