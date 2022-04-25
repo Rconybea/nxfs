@@ -31,6 +31,9 @@ mkDerivation {
 
   lfsdirect = lfs-direct;
 
+  # must coordinate with gcc/default.nix
+  gcc_version = "11.2.0";
+
   args = [ ./builder.sh ];
   setup = ./setup.sh;
 
