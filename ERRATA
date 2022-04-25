@@ -1,0 +1,7 @@
+- ncurses build fails because stdc++ installed to /mnt/lfs/..../c++/include;
+  fix by installing to /mnt/lfs/..../include instead
+
+- bash build fails building symlink for /bin/bash,  because /mnt/lfs/bin doesn't exist.
+  also link is broken since /mnt/lfs/bin/bash doesn't exist;
+  replace by symlink to /usr/bin/bash (which will be unbroken in chroot environment)
+  

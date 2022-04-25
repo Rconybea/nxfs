@@ -1,0 +1,29 @@
+Unsuccessful attempts.
+
+1. Try to have nix build write to /mnt/lfs/tools.
+   Doesn't work because nix-build is sandboxed,   only has write
+   permission to a temporary directory,  and to a single nix store location.
+
+2. Try to add a post-install step, to be run from outside nix-build.
+   This works for binutils,  but not for gcc.  Problem is that gcc build
+   requires write access to a location tht also contains binutils.
+
+   Worked around this by combining binutils and gcc into a single nix package.
+   Hopespecting that other packages won't run into this particular problem.
+
+3. Tried to add a buildFHSUserEnv step.
+   Hoping to use this to assemble a 'standard' directory tree that can be copied
+   simply to /mnt/lfs/root.
+   FHS user env uses user chroot
+   to create simulated /usr, /bin, /sbin mount points.
+
+   Two problems with trying to use this for gcc+binutils:
+   - the fhs user environment has lots of programs that we don't want
+     (it's trying to mimic a minimal set of tools you'd expect to see on a compliant unix distribution)
+   - it doesn't create symlink for the arch directory (x86_64-lfs-linux-gnu)
+
+4. Tried to exclude {gcc, binutils} from glibc build.
+   Rationale is that should only need the gcc_lfsx1_stage1 version of gcc,
+   since we're carefully setting up build to do just that.
+   However configure script checks for gcc (perhaps on general principles ?),
+   so restored vanilla {gcc, binutils} as dependencies.
