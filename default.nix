@@ -96,6 +96,9 @@ let
     # sed, output to /mnt/lfs
     sed_lfsd_stage1 = callPackage ./sed { lfs-direct = true; };
 
+    # tar, output to /mnt/lfs
+    tar_lfsd_stage1 = callPackage ./tar { lfs-direct = true; };
+
     fhs_stage1 = callPackage ./fhs_stage1 {};
 
     inherit nixpkgs;  # allows callers to use the nixpkgs version defined here
