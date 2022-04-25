@@ -93,6 +93,9 @@ let
     # patch, output to /mnt/lfs
     patch_lfsd_stage1 = callPackage ./patch { lfs-direct = true; };
 
+    # sed, output to /mnt/lfs
+    sed_lfsd_stage1 = callPackage ./sed { lfs-direct = true; };
+
     fhs_stage1 = callPackage ./fhs_stage1 {};
 
     inherit nixpkgs;  # allows callers to use the nixpkgs version defined here
