@@ -1,0 +1,6 @@
+# ignoring local build artifacts,
+# created when building with ./lfs-build.sh or nix-shell
+#
+bin
+gcc-*
+
