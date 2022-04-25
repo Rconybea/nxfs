@@ -6,6 +6,7 @@
 #  args
 #  setup
 #  glibc_version
+#  vsubdir
 #  binutils_vsubdir
 #  binutils_src
 #  mpfr_vsubdir
@@ -289,6 +290,14 @@ function install_gcc() {
     popd
 } # ..install_gcc
 
+function cleanup_phase() {
+    pushd ${home}
+    rm -rf bin
+    rm -rf ${binutils_vsubdir}
+    rm -rf ${vsubdir}
+    popd
+} # ..cleanup_phase
+
 function do_all_phases() {
     display_phase
     unpack_phase
@@ -298,10 +307,13 @@ function do_all_phases() {
     install_binutils
     compile_gcc
     install_gcc
+    cleanup_phase
 } # ..do_all_phases
 
 function help() {
     echo "build sequence:"
+    echo "$ do_all_phases"
+    echo "or:"
     echo "$ display_phase"
     echo "$ unpack_phase"
     echo "$ patch_phase"
@@ -310,6 +322,7 @@ function help() {
     echo "$ install_binutils"
     echo "$ compile_gcc"
     echo "$ install_gcc"
+    echo "$ cleanup_phase"
 }
 
 # end setup.sh
