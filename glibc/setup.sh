@@ -33,7 +33,7 @@ for p in ${baseInputs} ${buildInputs}; do
     fi
 done
 
-export PATH PKG_CONFIG_PATH
+export PKG_CONFIG_PATH
 
 LC_ALL=POSIX
 
@@ -48,9 +48,13 @@ export LC_ALL LFS LFS_TOOLS LFS_TGT
 #INSTALL_PREFIX=${LFS}        # install to /mnt/lfs (note: not LFS_TOOLS.  Differs from gcc)
 if [[ ${lfsdirect} -eq 1 ]]; then
     INSTALL_PREFIX=${LFS}
+
+    PATH=${LFS_TOOLS}/bin:${PATH}
 else
     INSTALL_PREFIX=${out}         # install to nix store
 fi
+
+export PATH
 
 # will put /bin/sh here.   Note that we need established build PATH before
 # we use mkdir :)
@@ -209,6 +213,13 @@ function install_phase() {
     #       (perhaps because of --prefix=/usr in configure step?)
     #       
     make DESTDIR=${INSTALL_PREFIX} -C build install
+    
+    if [[ ${lfsdirect} -eq 1 ]]; then
+	>&2 echo "${self}: mkheaders for gcc version [$gcc_version]"
+	${LFS_TOOLS}/libexec/gcc/${LFS_TGT}/${gcc_version}/install-tools/mkheaders
+    else
+	>&2 echo "${self}: TODO: decide how to do this for nix store build"
+    fi
 
     # replace
     #   RTDLIST="/usr/lib/ld-linux.so.2 /usr/lib64/ld-linux-x86-64.so.2 ..."
