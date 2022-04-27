@@ -1,5 +1,9 @@
-- ncurses build fails because stdc++ installed to /mnt/lfs/..../c++/include;
-  fix by installing to /mnt/lfs/..../include instead
+- FALSE ALARM
+  ncurses build fails because stdc++ installed to /mnt/lfs/..../c++/include;
+  fix by installing to /mnt/lfs/..../include instead.
+
+  This was actually because stdc++ was installed to the wrong directory
+  (was failing to propagate ${gcc_version} shell variable)
 
 - bash build fails building symlink for /bin/bash,  because /mnt/lfs/bin doesn't exist.
   also link is broken since /mnt/lfs/bin/bash doesn't exist;

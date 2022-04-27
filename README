@@ -25,6 +25,7 @@ changes from usual nix packaging:
      $ nix-shell . -A gcc_lfsx_stage1 --pure --run genericBuild
    to get the effect of a nix build,  without sandboxing.
    sandboxing prevents nix-build from reading/writing /mnt/lfs
+   can run path/to/codebase/lfs-build.sh to get something similar
 
 Instructions:
 P0. prepare /mnt/lfs/ directory as per LFS book
@@ -51,24 +52,66 @@ S0. gnu hello.
     - nxfs/hello/builder.sh           |
     - nxfs/hello/setup.sh             /
 
-    - nxfs/hello/final-install-aux.sh \ used for /mnt/lfs/tools install
-    - nxfs/hello/final-install.sh     /
-
-S1. gnu binutils.
+S1. gnu binutils (can skip this step,  keeping here for demo purposes)
 
     make stage1 binutils -> /mnt/lfs/tools
      $ nix-build -A binutils_lfsx_stage1
+
+    if you want to install straight to /mnt/lfs,  can use this
+    after reviewing/editing binutils/setup.sh:
      $ sudo ./binutils/final-install.sh
 
    source files (.nix, .sh) parallel the setup for S0
    the 'binutils' package isn't a dependency of anything else;
    it's folded into the 'gcc' package
 
-S2. gcc
+S2 gcc+binutils
 
-   make stage1 gcc -> nix store
-     $ nix-build -A gcc_lfsx_stage1
+   make stage1 gcc -> /mnt/lfs/tools
+     $ ./gcc/lfs-build.sh
 
    source files (.nix, .sh) parallel the setup for S0
 
+S3. linux headers (linux)
 
+   prep kernel headers -> /mnt/lfs
+     $ ./linux/lfs-build.sh
+   
+
+S4. gnu libc (glibc)
+
+   make stage1 glibc -> /mnt/lfs
+     $ ./glibc/lfs-build.sh
+
+S5. gnu stdc++ library (stdc++)
+
+   make stage1 stdc++ -> /mnt/lfs
+     $ ./stdc++/lfs-build.sh
+     
+S6. various other packages needed in stage1
+     $ ./m4/lfs-build.sh
+     $ ./ncurses/lfs-build.sh
+     $ ./bash/lfs-build.sh
+     $ ./coreutils/lfs-build.sh
+     $ ./diffutils/lfs-build.sh
+     $ ./file/lfs-build.sh
+     $ ./findutils/lfs-build.sh
+     $ ./gawk/lfs-build.sh
+     $ ./grep/lfs-build.sh
+     $ ./gzip/lfs-build.sh
+     $ ./make/lfs-build.sh
+     $ ./patch/lfs-build.sh
+     $ ./sed/lfs-build.sh
+     $ ./tar/lfs-build.sh
+     $ ./xz/lfs-build.sh
+
+S7. binutils stage2
+
+    make binutils -> /mnt/lfs;  build using stage1 cross-compiler
+      $ ./stage2/binutils/lfs-build.sh
+
+S8. gcc stage2
+
+    make gcc -> /mnt/lfs;  build using stage1 cross-compiler
+      $ ./stage2/gcc/lfs-build.sh
+      

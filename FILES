@@ -5,3 +5,5 @@
 +- hello/         # hello. "hello, world" as an autotools project (not used)
 +- binutils/      # binutils (stage1,  not used)
 +- gcc/           # gcc+binutils (stage1)
++- stage2/        # stage2 packages; use cross-compiler to compile itself + binutils.
+
