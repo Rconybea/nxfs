@@ -25,17 +25,19 @@ in
     args = [ ./builder.sh ];
     setup = ./setup.sh;
 
-  vsubdir = "gcc-${gcc_version}";
+    vsubdir = "gcc-${gcc_version}";
 
-  gcc_src = fetchurl {
-    url = "https://ftp.gnu.org/gnu/gcc/gcc-${gcc_version}/gcc-${gcc_version}.tar.xz";
-    sha256 = "12zs6vd2rapp42x154m479hg3h3lsafn3xhg06hp5hsldd9xr3nh";
-  };
+    gcc_version = "${gcc_version}";
 
-  buildInputs = [
-    pkg-config
-    #(pkgs.lib.getLib attr)
-    #(pkgs.lib.getDev attr)
-  ];
-}
+    gcc_src = fetchurl {
+      url = "https://ftp.gnu.org/gnu/gcc/gcc-${gcc_version}/gcc-${gcc_version}.tar.xz";
+      sha256 = "12zs6vd2rapp42x154m479hg3h3lsafn3xhg06hp5hsldd9xr3nh";
+    };
+
+    buildInputs = [
+      pkg-config
+      #(pkgs.lib.getLib attr)
+      #(pkgs.lib.getDev attr)
+    ];
+  }
 

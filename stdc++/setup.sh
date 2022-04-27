@@ -156,8 +156,8 @@ function configure_phase() {
 	--disable-multilib              \
 	--disable-nls                   \
 	--disable-libstdcxx-pch         \
-        --with-gxx-include-dir=/tools/${LFS_TGT}/include/${gcc_version}
-#	--with-gxx-include-dir=/tools/${LFS_TGT}/include/c++/${gcc_version}
+        --with-gxx-include-dir=/tools/${LFS_TGT}/include/c++/${gcc_version}
+#	--with-gxx-include-dir=/tools/${LFS_TGT}/include/${gcc_version}
     popd
 } # ..configure_phase
 
@@ -174,8 +174,8 @@ function install_phase() {
 
     pushd ${home}/${vsubdir}
 
-    if [[ ${INSTALL_PREFIX} = ${LFS_TOOLS} ]]; then
-	make -C build install
+    if [[ ${lfsdirect} -eq 1 ]]; then
+	make -C build DESTDIR=${INSTALL_PREFIX} install
     else
 	mkdir -pv ${out}
 
