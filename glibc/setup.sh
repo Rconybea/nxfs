@@ -70,7 +70,7 @@ home=$(pwd)
 function display_phase() {
     self=display_phase
     >&2 echo "${self}: home=${home}"
-    >&2 echo "${self}: src=${gcc_src}"
+    >&2 echo "${self}: src=${glibc_src}"
     >&2 echo "${self}: out=${out}"
     >&2 echo "${self}: linux_lfsx_stage1=${linux_lfsx_stage1}"
     >&2 echo "${self}: PATH=${PATH}"
