@@ -53,15 +53,6 @@ else
     INSTALL_PREFIX=${out}         # install to nix store
 fi
 
-# will put /bin/sh here.   Note that we need established build PATH before
-# we use mkdir :)
-#
-# BTW we could just use /bin on nixos,  since then /bin contains only /bin/sh;
-# however if running on non-nixos computer /bin may have other content, that we don't want in PATH
-#
-mkdir -p bin
-(cd bin && ln -sf /bin/sh)
-
 home=$(pwd)
 
 function display_phase() {
@@ -152,6 +143,19 @@ function configure_phase() {
     >&2 echo "configure_phase: curdir=$(pwd)"
     #echo "home=${home}"
     
+    pushd ${home}
+
+    # will put /bin/sh here.   Note that we need established build PATH before
+    # we use mkdir :)
+    #
+    # BTW we could just use /bin on nixos,  since then /bin contains only /bin/sh;
+    # however if running on non-nixos computer /bin may have other content, that we don't want in PATH
+    #
+    mkdir -p bin
+    (cd bin && ln -sf /bin/sh)
+
+    popd
+
     pushd ${home}/${binutils_vsubdir}
 
     mkdir -pv build
