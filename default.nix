@@ -99,6 +99,15 @@ let
     # tar, output to /mnt/lfs
     tar_lfsd_stage1 = callPackage ./tar { lfs-direct = true; };
 
+    # xz, output to /mnt/lfs
+    xz_lfsd_stage1 = callPackage ./xz { lfs-direct = true; };
+
+    # binutils stage2
+    binutils_lfsd_stage2 = callPackage ./stage2/binutils { lfs-direct = true; };
+
+    # gcc stage2
+    gcc_lfsd_stage2 = callPackage ./stage2/gcc { lfs-direct = true; };
+
     fhs_stage1 = callPackage ./fhs_stage1 {};
 
     inherit nixpkgs;  # allows callers to use the nixpkgs version defined here
