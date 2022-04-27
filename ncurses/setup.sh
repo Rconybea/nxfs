@@ -64,7 +64,7 @@ home=$(pwd)
 function display_phase() {
     self=display_phase
     >&2 echo "${self}: home=${home}"
-    >&2 echo "${self}: src=${gcc_src}"
+    >&2 echo "${self}: src=${ncurses_src}"
     >&2 echo "${self}: out=${out}"
     >&2 echo "${self}: PATH=${PATH}"
     >&2 echo "${self}: PKG_CONFIG_PATH=${PKG_CONFIG_PATH}"
@@ -169,7 +169,6 @@ function configure_ncurses() {
 		--without-normal             \
 		--disable-stripping          \
 		--enable-widec               
-#          	--with-gxx-include-dir=/tools/${LFS_TGT}/include/c++/${gcc_version}
 
     popd
 } # ..configure_ncurses
