@@ -1,0 +1,4 @@
+# bin/sh: generated symlink
+bin/sh
+#binutils-*
+gcc-*
