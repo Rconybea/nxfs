@@ -1,0 +1,31 @@
+26apr2022
+
+build fails with weird errors:
+    In file included from ./config.h:6,
+		     from ../../gcc/c/c-lang.c:21:
+    ./auto-host.h:2545:16: error: declaration does not declare anything [-fpermissive]
+     2545 | #define rlim_t long
+	  |                ^~~~
+    In file included from ../../gcc/c/c-lang.c:22:
+    ../../gcc/system.h:495:14: error: conflicting declaration of C function 'void* sbrk(int)'
+      495 | extern void *sbrk (int);
+	  |              ^~~~
+    In file included from ../../gcc/system.h:301,
+		     from ../../gcc/c/c-lang.c:22:
+    /mnt/lfs/usr/include/unistd.h:1076:14: note: previous declaration 'void* sbrk(intptr_t)'
+     1076 | extern void *sbrk (intptr_t __delta) __THROW;
+	  |              ^~~~
+    ...
+
+suspect that all the errors are coming from the same root cause.
+Verified that gcc/configure does not discover a system declaration of sbrk,
+and substitutes one from the gcc codebase.
+
+The gcc-provided declaration is here:
+    gcc-11.2.0/gcc/system.h
+The kernel-header version is here:
+    /mnt/lfs/usr/include/unistd.h
+
+perhaps gcc/configure only looks in /usr/include/unistd.h,   which doesn't exist
+on a nixos host.   If this is the case,  it's a bug that you might not encounter on
+a typical linux host
